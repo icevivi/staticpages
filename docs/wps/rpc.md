@@ -94,7 +94,7 @@ def testWps():
 
 ## 下载示例
 
-[本示例所用BIF文件](test_wps.BIF)  
+[本示例所用BIF文件](wps/test_wps.BIF)  
 
 ## 更多资料
 
