@@ -1,2 +1,2 @@
-﻿# 关于license的说明
+# 关于license的说明
 
