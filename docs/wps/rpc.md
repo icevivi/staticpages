@@ -33,7 +33,7 @@ sys.path```
 3. 在按钮的“点击时”脚本中写入：
 ```		testWps()```
 
-注意testWps()前有一个**tab**符，因为这段脚本是在函数button_clicked()内部的语句，开发者写入的语句都是从第二级开始的，必须要整体缩进一级。
+注意testWps()前有一个**tab**符，因为这段脚本是在函数button_clicked()内部的语句，所以写入的第一行语句就要增加缩进。
 
 ?> 在 biForm 中统一用**tab**缩进，不能用空格。
 
@@ -60,7 +60,7 @@ def testWps():
 			this.form.showSplashMsg('新文档保存在 /home/icevi/dev/test/hello.docx')
 		app.Quit(wpsapi.wdDoNotSaveChanges)```
 
-这段脚本因为是处于公共模块，所有语句都是从第一级开始的，所以不需要整体缩进。
+这段脚本因为是处于公共模块，输入的语句是从第一级开始的，所以不需要从第一行就增加缩进。
 
 ![testWps](2.png)
 
@@ -83,7 +83,8 @@ def testWps():
 [本示例所用BIF文件](test_wps.BIF)  
 
 ## 更多资料
-- [pywpsrpc](https://github.com/timxx/pywpsrpc)  
+- [pywpsrpc项目主页](https://github.com/timxx/pywpsrpc)  
 - WPS官方的开发网站[https://open.wps.cn/docs/office](https://open.wps.cn/docs/office)
 - VBA官方文档[https://docs.microsoft.com/en-us/office/vba/api/overview/](https://docs.microsoft.com/en-us/office/vba/api/overview/)
+- [biForm快速入门](https://docs.bilive.com/#/guides/biform_quickstart)
 
