@@ -15,8 +15,10 @@
 3. 通过应用商店安装 biForm 
 4. 打开终端，输入命令 ` pip3 install pywpsrpc` 安装 pywpsrpc
 5. 将 /home/deepin/.local/lib/python3.7/site-packages 下的 pywpsrpc 目录复制到 biform 相关目录下
-```cp -rp /home/deepin/.local/lib/python3.7/site-packages/pywpsrpc /opt/apps/com.bilive.biform/files/bin/lib/python3.6/site-packages/
 ```
+cp -rp /home/deepin/.local/lib/python3.7/site-packages/pywpsrpc /opt/apps/com.bilive.biform/files/bin/lib/python3.6/site-packages/
+```
+
 其中deepin改成你自己的用户名，如果不清楚pywpsrpc装到哪里去了，可以在终端中运行 python3，用以下命令查看
 
 ``` python
@@ -71,24 +73,31 @@ def testWps():
 ![testWps](2.png)
 
 5. 运行
+
 完成以上几步，程序实际上就可以运行了。
+
 点击 biForm 主窗口中的“运行”按钮，或按F5试运行。
 
 ![试运行](1.png)
 
 在试运行过程中，可以通过命令交互的方式，输入Python语句进行调试。
+
 ![运行调试](5.png)
 
 ?> 在 biForm 中的运行只是用于开发时调试，如果程序要提供给最终用户，需要将程序打包成PFF文件，并且最终用户处按前面章节所述配置好环境后才可使用。
 
 6. 最后看看生成的文档
+
 用WPS打开生成的 hello.docx ：
+
 ![结果](6.png)
 
 ## 下载示例
+
 [本示例所用BIF文件](test_wps.BIF)  
 
 ## 更多资料
+
 - [pywpsrpc项目主页](https://github.com/timxx/pywpsrpc)  
 - WPS官方的开发网站[https://open.wps.cn/docs/office](https://open.wps.cn/docs/office)
 - VBA官方文档[https://docs.microsoft.com/en-us/office/vba/api/overview/](https://docs.microsoft.com/en-us/office/vba/api/overview/)
