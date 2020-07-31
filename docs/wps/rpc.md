@@ -15,7 +15,7 @@
 3. 通过应用商店安装 biForm 
 4. 打开终端，输入命令 ` pip3 install pywpsrpc` 安装 pywpsrpc
 5. 将 /home/deepin/.local/lib/python3.7/site-packages 下的 pywpsrpc 目录复制到 biform 相关目录下
-```
+``` shell
 cp -rp /home/deepin/.local/lib/python3.7/site-packages/pywpsrpc /opt/apps/com.bilive.biform/files/bin/lib/python3.6/site-packages/
 ```
 
@@ -60,15 +60,17 @@ def testWps():
 		hr, doc = app.Documents.Add()
 		selection = app.Selection
 		selection.InsertAfter('Hello,world!\n你好，世界！')
-		v=doc.SaveAs2("/home/icevi/dev/test/hello1.docx")
+		v=doc.SaveAs2("/home/deepin/dev/test/hello.docx")
 		if v!=0:
 			this.form.showSplashMsg('保存失败',True)
 		else:
-			this.form.showSplashMsg('新文档保存在 /home/icevi/dev/test/hello.docx')
+			this.form.showSplashMsg('新文档保存在 /home/deepin/dev/test/hello.docx')
 		app.Quit(wpsapi.wdDoNotSaveChanges)
 ```
 
 这段脚本因为是处于公共模块，输入的语句是从第一级开始的，所以不需要从第一行就增加缩进。
+
+如果你要从上面复制这段代码粘贴到 biForm 中，要注意检查一下每行的缩进方式，如果是空格需要改成Tab。其中的文件目录需要改成你电脑上对应的目录。
 
 ![testWps](2.png)
 
@@ -95,6 +97,8 @@ def testWps():
 ## 下载示例
 
 [本示例所用BIF文件](wps/test_wps.BIF)  
+
+BIF文件用biForm打开就可查看界面和源码。
 
 ## 更多资料
 
