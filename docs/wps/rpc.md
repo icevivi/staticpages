@@ -38,13 +38,12 @@ sys.path
 
 ?> 在 biForm 中统一用**tab**缩进，不能用空格。
 
-![button_click](wps/3.png)
+![button_click](3.png)
 
 - 在脚本编辑器中选择“表单-公共模块”，写入以下Python脚本
 ```
 from pywpsrpc.rpcwpsapi import (createWpsRpcInstance, wpsapi)
 from pywpsrpc import RpcIter
-
 def testWps():
 	hr, rpc = createWpsRpcInstance()
 	hr, app = rpc.getWpsApplication()
