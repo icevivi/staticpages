@@ -5,7 +5,7 @@
 ## 背景说明
 
 - 开发用到了 [pywpsrpc](https://github.com/timxx/pywpsrpc) 这个项目提供的WPS Python二次开发接口
-- 文章中的例子都是在 deepin V20（AMD64）中进行的测试，使用UOS的用户需要进入开发者模式才能使用，否则不能安装pywpsrpc和往biForm安装目录下复制文件
+- 文章中的例子都是在 deepin V20（AMD64）中进行的测试，使用UOS的用户建议进入开发者模式后使用，否则可能不方便配置环境
 - 测试时用deepin V20 应用商店安装的WPS（版本：11.1.0.9505 - Release 正式版）有问题，直接从官网下载安装WPS for Linux （版本：11.1.0.9615 - Release 正式版）是没问题的
 - 目前pywpsrpc只能在**Linux**上用
 
@@ -15,16 +15,11 @@
 3. 通过应用商店安装 biForm 
 4. 打开终端，输入命令 ` pip3 install pywpsrpc` 安装 pywpsrpc
 5. 将 /home/deepin/.local/lib/python3.7/site-packages 下的 pywpsrpc 目录复制到 biform 相关目录下
-``` shell
+
+``` 
 cp -rp /home/deepin/.local/lib/python3.7/site-packages/pywpsrpc /opt/apps/com.bilive.biform/files/bin/lib/python3.6/site-packages/
 ```
-
-其中deepin改成你自己的用户名，如果不清楚pywpsrpc装到哪里去了，可以在终端中运行 python3，用以下命令查看
-
-``` python
-import sys
-sys.path
-```
+按你机器上对应的目录修改一下命令。
 
 ## biForm 调用演示
 
