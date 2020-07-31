@@ -18,10 +18,8 @@
 - 将 /home/deepin/.local/lib/python3.7/site-packages 下的 pywpsrpc 目录复制到 biform 相关目录下
 `cp -rp /home/deepin/.local/lib/python3.7/site-packages/pywpsrpc /opt/apps/com.bilive.biform/files/bin/lib/python3.6/site-packages/`
 其中deepin改成你自己的用户名，如果不清楚pywpsrpc装到哪里去了，可以在终端中运行 python3，用以下命令查看
-```
-import sys
-sys.path
-```
+```import sys
+sys.path```
 
 ## biForm 调用演示
 
@@ -32,7 +30,7 @@ sys.path
 ![form](wps/4.png)
 
 - 在按钮的“点击时”脚本中写入：
-`		testWps()`
+```		testWps()```
 
 注意testWps()前有一个**tab**符，因为这段脚本是在函数button_clicked()内部的语句，开发者写入的语句都是从第二级开始的，必须要整体缩进一级。
 
@@ -41,8 +39,7 @@ sys.path
 ![button_click](3.png)
 
 - 在脚本编辑器中选择“表单-公共模块”，写入以下Python脚本
-```
-from pywpsrpc.rpcwpsapi import (createWpsRpcInstance, wpsapi)
+```from pywpsrpc.rpcwpsapi import (createWpsRpcInstance, wpsapi)
 from pywpsrpc import RpcIter
 def testWps():
 	hr, rpc = createWpsRpcInstance()
@@ -59,8 +56,8 @@ def testWps():
 			this.form.showSplashMsg('保存失败',True)
 		else:
 			this.form.showSplashMsg('新文档保存在 /home/icevi/dev/test/hello.docx')
-		app.Quit(wpsapi.wdDoNotSaveChanges)
-```
+		app.Quit(wpsapi.wdDoNotSaveChanges)```
+
 这段脚本因为是处于公共模块，所有语句都是从第一级开始的，所以不需要整体缩进。
 
 ![testWps](wps/2.png)
