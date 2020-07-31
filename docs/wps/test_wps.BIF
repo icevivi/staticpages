@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="GBK"?>
+<dwform
+	Base-Form_caption-="newform"
+	Base-Form_name-="newform"
+	Base-GUID-="{18c85853-0bd2-4f06-8724-34ff7d425d33}"
+	Base-License_key-="{1739f656-4810-480a-a002-8eb1066c152f}"
+	Base-Need_license-="False"
+	Base-PFF_version-="3.1"
+	Base-Use_limit_by_record_count-="True"
+	Base-Version-="2"
+	Data-Main_table-=""
+	Format-Background_color-="(246,246,246,255)"
+	Format-Background_image-=""
+	Format-Background_image_fill_type-="Texture"
+	Format-Default_font-="DejaVu Sans,9"
+	Format-Default_foreground_color-="(0,0,0,255)"
+	Format-Icon-=""
+	Format-Margin-="0"
+	Other-Actions_order-=""
+	Other-Blank_new_enabled-="True"
+	Other-Drop_enabled-="True"
+	Other-Export_to_Excel_enabled-="True"
+	Other-Export_to_PFD_enabled-="True"
+	Other-Image_set-=""
+	Other-Import_from_PFD_enabled-="True"
+	Other-Location_bar_enabled-="True"
+	Other-Not_use_default_frame-="False"
+	Other-Print_enabled-="True"
+	Other-Query_enabled-="True"
+	Other-Remark-=""
+	Other-Save_enabled-="True"
+	Other-System_theme_enabled-="True"
+	Other-Toolbar_enabled-="True"
+	Other-UUID_of_Print_Form-=""
+	Other-User_Help-=""
+	Other-View_model-="Form and list model"
+	Remote-Auto_stock_received_data_enabled-="True"
+	Remote-Auto_transfer_enabled-="False"
+	Remote-Batch_transfer_enabeld-="True"
+	Remote-Caption_of_add_to_stock_action-="收藏"
+	Remote-Only_transfer_to_owner-="False"
+	Remote-Remote_transfer_enabled-="False"
+	Script--Public_module-="#以下写入你自己的脚本:
+from pywpsrpc.rpcwpsapi import (createWpsRpcInstance, wpsapi)
+from pywpsrpc import RpcIter
+
+def testWps():
+	hr, rpc = createWpsRpcInstance()
+	hr, app = rpc.getWpsApplication()
+	if app is None:
+		this.form.showSplashMsg('WPS初始化失败')
+	else:
+		app.setVisible(False)
+		hr, doc = app.Documents.Add()
+		selection = app.Selection
+		selection.InsertAfter('Hello,world!\n你好，世界！')
+		v=doc.SaveAs2(&quot;/home/deepin/dev/test/hello.docx&quot;)
+		if v!=0:
+			this.form.showSplashMsg('保存失败',True)
+		else:
+			this.form.showSplashMsg('新文档保存在 /home/deepin/dev/test/hello.docx')
+		app.Quit(wpsapi.wdDoNotSaveChanges)
+"
+	Script-After_Print-=""
+	Script-After_add_to_stock-=""
+	Script-After_close-=""
+	Script-After_contact_receive_remote_data_failed-=""
+	Script-After_contact_receive_remote_data_successed-=""
+	Script-After_create_new-=""
+	Script-After_delete-=""
+	Script-After_get_new_inbox_data-=""
+	Script-After_load-=""
+	Script-After_save-=""
+	Script-After_send_remote_data-=""
+	Script-Batch_transfer_filter-=""
+	Script-Before_Print-=""
+	Script-Before_add_to_stock-=""
+	Script-Before_close-=""
+	Script-Before_create_new-=""
+	Script-Before_delete-=""
+	Script-Before_load-=""
+	Script-Before_save-=""
+	Script-Before_send_remote_data-=""
+	Script-Form_number_coding_rule-=""
+	Script-General_filter_string-=""
+	Script-Load_record-=""
+	Script-Print_args-=""
+	Script-Record_alias-=""
+	Script-Relative_record-=""
+	Script-SingleShot-=""
+	Script-Timer_timeout-=""
+	Script-When_cannot_send_remote_data-=""
+	Show-Print_page_number-="False"
+	Show-Show_background_image_in_PDF-="True"
+	Show-Show_background_image_in_printer-="False"
+	Show-Use_transparent_background_in_PDF-="False"
+	Show-Use_transparent_background_in_printer-="True"
+	Size-Height-="1188"
+	Size-Width-="840">
+	<widgets>
+	<widget 
+		Base-Control_class-="Button"
+		Base-Control_name-="button"
+		Border-Border_color-="(135,135,135,255)"
+		Border-Border_style-="Solid Line"
+		Border-Border_width-="1"
+		Border-Show_border-="False"
+		Format-Background_color-="(255,255,255,255)"
+		Format-Fill_style-="Transparent"
+		Format-Font-="DejaVu Sans,9"
+		Format-Foreground_color-="(0,0,0,255)"
+		Format-Horizontal_alignment-="Center"
+		Format-Icon-=""
+		Format-Icon_size-="22"
+		Format-Is_flat-="False"
+
+		Format-Vertical_alignment-="Center"
+		Other-Accept_Drops-="False"
+		Other-Caption-="button"
+		Other-Drag_Enabled-="False"
+		Other-Enabled-="True"
+		Other-Recreate_ever_use-="True"
+		Other-Reload_content_when_create_new-="True"
+		Other-Status_tip-=""
+		Other-Tab_order-="1"
+		Other-Tool_tip-=""
+		Other-Useful_for_form_data-="True"
+		Other-Whats_this-=""
+		Position-X-="150"
+		Position-Y-="186"
+		Script-After_create_editor-=""
+		Script-After_finished_edit-=""
+		Script-Before_enter_edit-=""
+		Script-Clicked_="	#以下写入你自己的脚本:
+	testWps()"
+		Script-Create_Mime_Data-=""
+		Script-Drag_Drop-=""
+		Script-Enter-=""
+		Script-Get_focus-=""
+		Script-Leave-=""
+		Script-Lost_focus-=""
+		Script-Resize-=""
+		Script-SingleShot-=""
+		Script-Timer_timeout-=""
+		Script-When_Drag_Enter-=""
+		Show-Show_in_PDF-="True"
+		Show-Show_in_form-="True"
+		Show-Show_in_printer-="True"
+		Size-Height-="28"
+		Size-Width-="150"		>
+
+		</widget>
+	</widgets>
+	<devinfo 
+		email=""
+		hardwarenumber="a3e4a3d045e6df05749958f6b4d45910b476050927747797f7e2891b89b425fd"
+		devtype="02110ef661e75ec73d4efc425a12b3d3b476050927747797f7e2891b89b425fd"
+	>
+	</devinfo>
+	<actions>
+	</actions>
+	<references>
+	</references>
+
+<DB/>
+
+	<deploylist>
+		<item>/home/icevi/dev/debtools/PFF/测试wps接口.PFF</item>
+	</deploylist>
+</dwform>
