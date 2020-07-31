@@ -13,14 +13,16 @@
 1. 安装 WPS （官网下载）
 2. 运行 WPS，接受协议之类的操作都完成。确定一下“设置中心”-“切换窗口管理模式”中显示的是“多组件模式”，如果不是就切换到“多组件模式”并重启 WPS。
 3. 通过应用商店安装 biForm 
-4. 打开终端，输入以下命令安装 pywpsrpc
-` pip3 install pywpsrpc`
+4. 打开终端，输入命令 ` pip3 install pywpsrpc` 安装 pywpsrpc
 5. 将 /home/deepin/.local/lib/python3.7/site-packages 下的 pywpsrpc 目录复制到 biform 相关目录下
-`cp -rp /home/deepin/.local/lib/python3.7/site-packages/pywpsrpc /opt/apps/com.bilive.biform/files/bin/lib/python3.6/site-packages/`
+```cp -rp /home/deepin/.local/lib/python3.7/site-packages/pywpsrpc /opt/apps/com.bilive.biform/files/bin/lib/python3.6/site-packages/
+```
 其中deepin改成你自己的用户名，如果不清楚pywpsrpc装到哪里去了，可以在终端中运行 python3，用以下命令查看
 
-```import sys
-sys.path```
+``` python
+import sys
+sys.path
+```
 
 ## biForm 调用演示
 
@@ -31,7 +33,9 @@ sys.path```
 ![form](4.png)
 
 3. 在按钮的“点击时”脚本中写入：
-```		testWps()```
+``` python
+	testWps()
+```
 
 注意testWps()前有一个**tab**符，因为这段脚本是在函数button_clicked()内部的语句，所以写入的第一行语句就要增加缩进。
 
@@ -41,7 +45,8 @@ sys.path```
 
 4. 在脚本编辑器中选择“表单-公共模块”，写入以下Python脚本
 
-```from pywpsrpc.rpcwpsapi import (createWpsRpcInstance, wpsapi)
+``` python
+from pywpsrpc.rpcwpsapi import (createWpsRpcInstance, wpsapi)
 from pywpsrpc import RpcIter
 def testWps():
 	hr, rpc = createWpsRpcInstance()
@@ -58,7 +63,8 @@ def testWps():
 			this.form.showSplashMsg('保存失败',True)
 		else:
 			this.form.showSplashMsg('新文档保存在 /home/icevi/dev/test/hello.docx')
-		app.Quit(wpsapi.wdDoNotSaveChanges)```
+		app.Quit(wpsapi.wdDoNotSaveChanges)
+```
 
 这段脚本因为是处于公共模块，输入的语句是从第一级开始的，所以不需要从第一行就增加缩进。
 
