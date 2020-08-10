@@ -216,10 +216,5 @@ def showData():
 
 ## 下载示例
 
-[本示例所用BIF文件](https://raw.githubusercontent.com/icevivi/staticpages/master/docs/plotdemo/plotdemo.BIF)
-
-[本示例生成的PFF文件](https://raw.githubusercontent.com/icevivi/staticpages/master/docs/plotdemo/plotdemo.PFF)  
-
-[本示例所用xlsx文件](https://raw.githubusercontent.com/icevivi/staticpages/master/docs/plotdemo/orders.xlsx)    
-
+[本示例所有文件](https://raw.githubusercontent.com/icevivi/staticpages/master/docs/plotdemo/plotdemo.zip)
 
