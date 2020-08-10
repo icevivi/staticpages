@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="GBK"?>
+<dwform
+	Base-Form_caption_="演示数据仪表盘"
+	Base-Form_name_="plotdemo"
+	Base-GUID-="{767db21d-9bf5-4c45-840e-324c60ac8425}"
+	Base-License_key-="{a24c3b13-ceea-4128-aaa9-230853e365e7}"
+	Base-Need_license-="False"
+	Base-PFF_version-="3.1"
+	Base-Use_limit_by_record_count-="True"
+	Base-Version-="3"
+	Data-Main_table-=""
+	Format-Background_color_="(255,255,255,255)"
+	Format-Background_image-=""
+	Format-Background_image_fill_type-="Texture"
+	Format-Default_font-="微软雅黑,10"
+	Format-Default_foreground_color-="(0,0,0,255)"
+	Format-Icon-=""
+	Format-Margin-="0"
+	Other-Actions_order-=""
+	Other-Blank_new_enabled-="True"
+	Other-Drop_enabled-="True"
+	Other-Export_to_Excel_enabled-="True"
+	Other-Export_to_PFD_enabled-="True"
+	Other-Image_set-=""
+	Other-Import_from_PFD_enabled-="True"
+	Other-Location_bar_enabled-="True"
+	Other-Not_use_default_frame_="True"
+	Other-Print_enabled-="True"
+	Other-Query_enabled-="True"
+	Other-Remark-=""
+	Other-Save_enabled-="True"
+	Other-System_theme_enabled-="True"
+	Other-Toolbar_enabled_="False"
+	Other-UUID_of_Print_Form-=""
+	Other-User_Help-=""
+	Other-View_model_="Form model only"
+	Remote-Auto_stock_received_data_enabled-="True"
+	Remote-Auto_transfer_enabled-="False"
+	Remote-Batch_transfer_enabeld-="True"
+	Remote-Caption_of_add_to_stock_action-="收藏"
+	Remote-Only_transfer_to_owner-="False"
+	Remote-Remote_transfer_enabled-="False"
+	Script--Public_module-="#以下写入你自己的脚本:
+import pandas as pd
+import matplotlib.pyplot as plt
+import math
+import random
+
+from PythonQt.Qt import QSizePolicy
+
+def updateUI():
+	#更新界面
+	a=QSizePolicy()
+	a.setHorizontalPolicy(QSizePolicy.Expanding)
+	a.setVerticalPolicy(QSizePolicy.Fixed)
+	b=QSizePolicy()
+	b.setHorizontalPolicy(QSizePolicy.Expanding)
+	b.setVerticalPolicy(QSizePolicy.Expanding)
+	c=QSizePolicy()
+	c.setHorizontalPolicy(QSizePolicy.Fixed)
+	c.setVerticalPolicy(QSizePolicy.Fixed)
+	d=QSizePolicy()
+	d.setHorizontalPolicy(QSizePolicy.Fixed)
+	d.setVerticalPolicy(QSizePolicy.Expanding)
+	#---
+	this.button.setSizePolicy(c)
+	this.label.setSizePolicy(a)
+	this.frameTool.setSizePolicy(a)
+	this.frameTool.setHLayout(['button','label'],10,10,10,10,10)
+	this.form.setVLayout(['frameTool','image1'],10,10,10,10,10)
+	this.image1.setSizePolicy(b)
+
+def showData():
+	filename = pub.getOpenFileName(this.form.caption,'','*.xlsx')
+	if len(filename)==0:
+		return
+	this.label.caption = filename
+	orders=pd.read_excel(filename)
+	plt.rcParams['font.sans-serif'] = ['SimHei']
+	plt.rcParams['axes.unicode_minus'] = False
+	plt.figure(figsize=(15,8))	
+	#==============第一个：每日订单与成交额走势，柱形图与折线图组合
+	plt.subplot(2,2,1)   #2×2个子图：第二个
+	data1 = orders.groupby('付款时间')['支付金额','订单编号'].agg({'支付金额':'sum','订单编号':'count'})  #处理数据
+	x = data1.index
+	y1 = data1['支付金额']  #y主轴数据
+	y2 = data1['订单编号']  #y次轴数据
+	plt.title('订单&amp;GMV走势')  #图表标题 
+	plt.bar(x,y1,label='GMV')  #GMV柱形图
+	plt.ylim(0,15000)   #设置y1的坐标轴范围
+	for a,b in zip(x,y1):  #添加数据标签
+		plt.text(a,b+0.1,'%d'%b,ha='center',va='bottom')  #在x,y1+0.1的位置上添加GMV数据 ， '%d'%y 即标签数据, ha和va控制标签位置
+	plt.legend(loc=1)  #显示图例，loc=1为右上角
+
+	plt.twinx()  #次纵坐标轴
+	plt.plot(x,y2,label='订单数',color='red')  #订单折线图，红色
+	plt.ylim(0,800) #设置y2的坐标轴范围
+	for a,b in zip(x,y2):  #添加数据标签
+		plt.text(a,b+0.2,'%d'%b,ha='center',va='bottom')  #在x,y2+0.1的位置上添加订单数据 
+	plt.legend(loc=2)  #显示图例,loc=2为左上角
+	
+	#==============第二个：主要商家，每日GMV趋势。 多条折线图
+	#数据处理
+	data2 = pd.DataFrame(orders[orders['商家名称'].isin(['店铺一','店铺二','店铺三','店铺四'])].groupby(['商家名称','付款时间'])['支付金额'].sum())  
+	#店铺的成交额
+	data2_tmp = pd.DataFrame(index=set(data2.index.get_level_values(0)),columns=set(data2.index.get_level_values(1)))
+	for ind in data2_tmp.index:
+		for col in data2_tmp.columns:			
+			try:
+				data2_tmp.loc[ind,col] = data2.loc[ind,:].loc[col,'支付金额']
+			except:
+				data2_tmp.loc[ind,col] = 0
+
+	plt.subplot(2,2,2)   #2×2个子图：第二个
+	plt.title('主要商家GMV趋势')
+	colors = ['green','red','skyblue','blue']  #设置曲线颜色
+	x = sorted(data2_tmp.columns)  #日期是横轴
+	for i in range(len(data2_tmp.index)):
+		plt.plot(x,data2_tmp.loc[data2_tmp.index[i],:],label=data2_tmp.index[i],color=colors[i])
+	plt.legend()  #显示图例,loc默认为0，即最优位置
+	
+	#==============第三个：订单来源端口，每日趋势。  堆积柱形图
+	#数据处理
+	data3_tmp = pd.DataFrame(orders.groupby(['平台来源','付款时间'])['支付金额'].sum())
+	data3 = pd.DataFrame(index=set(data3_tmp.index.get_level_values(0)),columns=set(data3_tmp.index.get_level_values(1)))
+	for ind in data3.index:
+		for col in data3.columns:			
+			try:
+				data3.loc[ind,col] = data3_tmp.loc[ind,:].loc[col,'支付金额']
+			except:
+				data3.loc[ind,col] = 0
+
+	barx = sorted(data3.columns)
+	bary1 = data3.loc['安卓',:]
+	bary2 = data3.loc['iphone',:]
+
+	plt.subplot(2,2,3)   #2×2个子图：第三个
+	plt.title('订单来源端口分布')   #底部是安卓，顶部是iPhone。先画iPhone=安卓+iPhone，再画安卓
+	plt.bar(barx,bary1+bary2,label='iphone',color='green')
+	plt.bar(barx,bary1,label='安卓',color='red') #底部是bar_y数据
+	plt.legend()  
+	for a,b,c in zip(barx,bary1,bary2):  #添加数据标签，注意：底部是安卓，即y1
+		if math.isnan(b):
+			plt.text(a,1000,'0',ha='center',va='bottom')  #在a,1000的位置上，添加数据标签
+		else:
+			plt.text(a,1000,'%d'%b,ha='center',va='bottom')  #在a,1000的位置上，添加数据标签
+		if math.isnan(c):
+			plt.text(a,b+c-1000,'0',ha='center',va='bottom')  #调整标签的位置
+		else:
+			plt.text(a,b+c-1000,'%d'%c,ha='center',va='bottom')  #调整标签的位置
+
+	#==============第四个：类目占比。 饼图
+	#最近一天的类目金额
+	data4 = orders[orders['付款时间']==max(orders['付款时间'])].groupby('类目')['支付金额'].sum().sort_values()   
+	plt.subplot(2,2,4)   #2×2个子图：第四个
+	plt.title('最近一天的类目占比')
+	plt.axis('equal')   #正圆，饼图会默认是椭圆
+	plt.pie(data4.values,labels=data4.index,autopct='%1.1f%%',\
+			colors=['green','red','skyblue','blue'])  #显示百分数,1位小数			
+			
+	#==============显示图像
+	plt.savefig(pub.getTempFilePath()+'/testplt1.jpg')
+	this.image1.setImage(pub.pixmap(pub.getTempFilePath()+'/testplt1.jpg'))	
+"
+	Script-After_Print-=""
+	Script-After_add_to_stock-=""
+	Script-After_close-=""
+	Script-After_contact_receive_remote_data_failed-=""
+	Script-After_contact_receive_remote_data_successed-=""
+	Script-After_create_new-="	#以下写入你自己的脚本:
+	updateUI()"
+	Script-After_delete-=""
+	Script-After_get_new_inbox_data-=""
+	Script-After_load-=""
+	Script-After_save-=""
+	Script-After_send_remote_data-=""
+	Script-Batch_transfer_filter-=""
+	Script-Before_Print-=""
+	Script-Before_add_to_stock-=""
+	Script-Before_close-=""
+	Script-Before_create_new-=""
+	Script-Before_delete-=""
+	Script-Before_load-=""
+	Script-Before_save-=""
+	Script-Before_send_remote_data-=""
+	Script-Form_number_coding_rule-=""
+	Script-General_filter_string-=""
+	Script-Load_record-=""
+	Script-Print_args-=""
+	Script-Record_alias-=""
+	Script-Relative_record-=""
+	Script-SingleShot-=""
+	Script-Timer_timeout-=""
+	Script-When_cannot_send_remote_data-=""
+	Show-Print_page_number-="False"
+	Show-Show_background_image_in_PDF-="True"
+	Show-Show_background_image_in_printer-="False"
+	Show-Use_transparent_background_in_PDF-="False"
+	Show-Use_transparent_background_in_printer-="True"
+	Size-Height_="500"
+	Size-Width_="600">
+	<widgets>
+	<widget 
+		Base-Control_class-="Image"
+		Base-Control_name_="image1"
+		Border-Border_color-="(135,135,135,255)"
+		Border-Border_style-="Solid Line"
+		Border-Border_width-="1"
+		Border-Show_border-="False"
+		Data-Image_source-=""
+		Format-Background_color-="(255,255,255,255)"
+		Format-Fill_style-="Transparent"
+		Format-Horizontal_alignment_="Center"
+		Format-Image_fill_type_="Scaled Contents"
+		Format-Vertical_alignment-="Center"
+		Other-Accept_Drops-="False"
+		Other-Drag_Enabled-="False"
+		Other-Enabled-="True"
+		Other-Recreate_ever_use-="True"
+		Other-Reload_content_when_create_new-="True"
+		Other-Status_tip-=""
+		Other-Tab_order-="-1"
+		Other-Tool_tip-=""
+		Other-URL-=""
+		Other-Useful_for_form_data-="True"
+		Other-Whats_this-=""
+		Position-X-="27"
+		Position-Y-="109"
+		Script-After_create_editor-=""
+		Script-After_finished_edit-=""
+		Script-Before_enter_edit-=""
+		Script-Create_Mime_Data-=""
+		Script-Default_value-=""
+		Script-Drag_Drop-=""
+		Script-Enter-=""
+		Script-Leave-=""
+		Script-Resize-=""
+		Script-SingleShot-=""
+		Script-Timer_timeout-=""
+		Script-When_Drag_Enter-=""
+		Show-Show_in_PDF-="True"
+		Show-Show_in_form-="True"
+		Show-Show_in_printer-="True"
+		Size-Height-="254"
+		Size-Width-="352"		>
+
+		</widget>
+	<widget 
+		Base-Control_class-="Frame"
+		Base-Control_name_="frameTool"
+		Border-Show_border-="False"
+		Data-Image_source-=""
+		Format-Background_color-="(236,233,216,255)"
+		Format-Fill_style-="Transparent"
+		Format-Font-="微软雅黑,10"
+		Format-Foreground_color-="(0,0,0,255)"
+		Format-Frame_shadow-="Sunken"
+		Format-Horizontal_ScrollBar_Policy-="As needed"
+		Format-Use_scrollbar-="False"
+		Format-Vertical_ScrollBar_Policy-="As needed"
+		Format-Viewport_height-="200"
+		Format-Viewport_width-="200"
+		Other-Accept_Drops-="False"
+		Other-Drag_Enabled-="False"
+		Other-Enabled-="True"
+		Other-Recreate_ever_use-="True"
+		Other-Reload_content_when_create_new-="True"
+		Other-Status_tip-=""
+		Other-Tab_order-="-1"
+		Other-Tool_tip-=""
+		Other-Useful_for_form_data-="True"
+		Other-Whats_this-=""
+		Position-X-="32"
+		Position-Y-="16"
+		Script-After_create_editor-=""
+		Script-After_finished_edit-=""
+		Script-Before_enter_edit-=""
+		Script-Create_Mime_Data-=""
+		Script-Drag_Drop-=""
+		Script-Enter-=""
+		Script-Leave-=""
+		Script-Resize-=""
+		Script-SingleShot-=""
+		Script-Timer_timeout-=""
+		Script-When_Drag_Enter-=""
+		Show-Show_in_PDF-="True"
+		Show-Show_in_form-="True"
+		Show-Show_in_printer-="True"
+		Size-Height-="65"
+		Size-Width-="461"		>
+		<parent name="frameTool">
+		<child 
+			Base-Control_class-="Button"
+			Base-Control_name-="button"
+			Border-Border_color-="(135,135,135,255)"
+			Border-Border_style-="Solid Line"
+			Border-Border_width-="1"
+			Border-Show_border-="False"
+			Format-Background_color-="(255,255,255,255)"
+			Format-Fill_style-="Transparent"
+			Format-Font-="微软雅黑,10"
+			Format-Foreground_color-="(0,0,0,255)"
+			Format-Horizontal_alignment-="Center"
+			Format-Icon-=""
+			Format-Icon_size-="22"
+			Format-Is_flat-="False"
+
+			Format-Vertical_alignment-="Center"
+			Other-Accept_Drops-="False"
+			Other-Caption_="选择数据文件..."
+			Other-Drag_Enabled-="False"
+			Other-Enabled-="True"
+			Other-Recreate_ever_use-="True"
+			Other-Reload_content_when_create_new-="True"
+			Other-Status_tip-=""
+			Other-Tab_order-="1"
+			Other-Tool_tip-=""
+			Other-Useful_for_form_data-="True"
+			Other-Whats_this-=""
+			Position-X-="6"
+			Position-Y-="11"
+			Script-After_create_editor-=""
+			Script-After_finished_edit-=""
+			Script-Before_enter_edit-=""
+			Script-Clicked_="	#以下写入你自己的脚本:
+	showData()"
+			Script-Create_Mime_Data-=""
+			Script-Drag_Drop-=""
+			Script-Enter-=""
+			Script-Get_focus-=""
+			Script-Leave-=""
+			Script-Lost_focus-=""
+			Script-Resize-=""
+			Script-SingleShot-=""
+			Script-Timer_timeout-=""
+			Script-When_Drag_Enter-=""
+			Show-Show_in_PDF-="True"
+			Show-Show_in_form-="True"
+			Show-Show_in_printer-="True"
+			Size-Height-="43"
+			Size-Width-="137"			>
+
+			button</child>
+		<child 
+			Base-Control_class-="Label"
+			Base-Control_name-="label"
+			Border-Border_color-="(135,135,135,255)"
+			Border-Border_style-="Solid Line"
+			Border-Border_width-="1"
+			Border-Show_border-="False"
+			Format-Background_color-="(255,255,255,255)"
+			Format-Fill_style-="Transparent"
+			Format-Font-="微软雅黑,10"
+			Format-Foreground_color-="(0,0,0,255)"
+			Format-Horizontal_alignment-="Left"
+			Format-Vertical_alignment-="Center"
+			Format-Wordwrap-="False"
+			Other-Accept_Drops-="False"
+			Other-Caption_=""
+			Other-Drag_Enabled-="False"
+			Other-Enabled-="True"
+			Other-Recreate_ever_use-="True"
+			Other-Reload_content_when_create_new-="True"
+			Other-Status_tip-=""
+			Other-Tab_order-="-1"
+			Other-Tool_tip-=""
+			Other-URL-=""
+			Other-Useful_for_form_data-="True"
+			Other-Whats_this-=""
+			Position-X-="154"
+			Position-Y-="17"
+			Script-After_create_editor-=""
+			Script-After_finished_edit-=""
+			Script-Before_enter_edit-=""
+			Script-Create_Mime_Data-=""
+			Script-Drag_Drop-=""
+			Script-Enter-=""
+			Script-Leave-=""
+			Script-Resize-=""
+			Script-SingleShot-=""
+			Script-Timer_timeout-=""
+			Script-When_Drag_Enter-=""
+			Show-Show_in_PDF-="True"
+			Show-Show_in_form-="True"
+			Show-Show_in_printer-="True"
+			Size-Height-="28"
+			Size-Width-="257"			>
+
+			label</child>
+		</parent>
+		>
+
+		</widget>
+	</widgets>
+	<devinfo 
+		email="f67ef35a54b41f9fc154c660906538db448f8b77f98e04480ea2df214c7d4a39"
+		hardwarenumber="d199a9ada92ed3beac8db6ac0942350fb476050927747797f7e2891b89b425fd"
+		devtype="fdb510c19c375cdd18daef9815e85bedb476050927747797f7e2891b89b425fd"
+	>
+	</devinfo>
+	<actions>
+	</actions>
+	<references>
+	</references>
+
+<DB/>
+
+	<deploylist>
+		<item>D:/GitHub/biReader/staticpages/docs/plotdemo/plotdemo.PFF</item>
+	</deploylist>
+</dwform>
