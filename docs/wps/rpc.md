@@ -91,7 +91,7 @@ def testWps():
 
 ## 下载示例
 
-[本示例所用BIF文件](wps/test_wps.BIF)  
+[本示例所用BIF文件](test_wps.BIF)  
 
 BIF文件用biForm打开就可查看界面和源码。
 
