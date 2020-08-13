@@ -4,23 +4,23 @@
 
 ## biForm 和 Qt 的关系
 
-- biForm 主要是用 Qt 开发的，目前 V3.1 使用的是 Qt5.11.1
+概括地讲，biForm 和 Qt 的关系体现在以下几个方面：
 
-- biForm 提供了可视化的界面设计器，用户可以以“所见即所得”的方式设计一个应用的图形化界面。界面设计器上所有控件，都是继承自 QWidget 或 QObject，接口与 Qt 中的基类略有不同
+1 biForm 主要是用 Qt 开发的，目前 V3.1 使用的是 Qt5.11.1
 
-- 用户也可以通过脚本直接使用 Qt 库。目前发布的 biForm V3.1 中包含了'QtCore', 'QtGui', 'QtMultimedia', 'QtNetwork', 'QtOpenGL', 'QtSql', 'QtSvg', 'QtUiTools', 'QtXml', 'QtXmlPatterns' ,'Qt namespace','QtWidget' 这些模块
+2 biForm 提供了可视化的界面设计器，用户可以以“所见即所得”的方式设计一个图形化界面。界面设计器上所有控件，都是继承自 QWidget 和 QObject，接口做了些封装，与 Qt 中的基类略有不同
 
-- biForm 中是通过 Python 脚本来调用这些 Qt 库的，也可以通过 Python 脚本创建 Qt 类的子类 ，通过 Python 中面向对象的处理实现对象的多态性
+3 用户可以通过脚本直接使用 Qt 库中的类和控件。目前发布的 biForm V3.1 中包含了'QtCore', 'QtGui', 'QtMultimedia', 'QtNetwork', 'QtOpenGL', 'QtSql', 'QtSvg', 'QtUiTools', 'QtXml', 'QtXmlPatterns' ,'Qt namespace','QtWidget' 这些模块
 
-## Python 和 Qt
+4 biForm 开发的应用通过 Python 脚本来调用 Qt 库，也可以通过 Python 的面向对象的语法创建 Qt 类的实例，也可以通过继承 Qt 基类，使用重载和重写实现更复杂的面向对象编程
 
-在 biForm 中是通过 Python 语句来调用与 Qt 的，所以有必要先搞清楚在 biForm 中 Python 和 Qt 的关系。
+## biForm 中 Python 和 Qt 是什么关系的
 
-要实现 Python 调用 Qt 需要解决很多方面的问题，我们从以下几个方面进行讲解：
+在 biForm 中是通过 Python 语句来调用 Qt 库 的，从以下几个方面进行介绍：
 
 ### 如何调用 Qt 库
 
-biForm 中将对 Qt 库的调用都封装在 PythonQt 模块中，在程序中用```import PythonQt```就可以使用。
+biForm 中将对 Qt 库都封装在 PythonQt 模块中供 Python 程序调用。在程序中用导入其它 Python 库一样的方法进行导入，比如```import PythonQt```，导入后就可以使用。
 
 示例：
 
@@ -30,7 +30,7 @@ biForm 中将对 Qt 库的调用都封装在 PythonQt 模块中，在程序中�
 ['BoolResult', 'Debug', 'Qt', 'QtCore', 'QtGui', 'QtMultimedia', 'QtNetwork', 'QtOpenGL', 'QtSql', 'QtSvg', 'QtUiTools', 'QtXml', 'QtXmlPatterns', '__doc__', '__loader__', '__name__', '__package__', '__spec__', 'private']
 ```
 
-我们可以看到 PythonQt 模块中包含了'Qt', 'QtCore', 'QtGui', 'QtMultimedia', 'QtNetwork', 'QtOpenGL', 'QtSql', 'QtSvg', 'QtUiTools', 'QtXml', 'QtXmlPatterns'这些模块。其中 'PythonQt.Qt' 模块对应 [QtWidget](https://doc.qt.io/qt-5/qtwidgets-index.html) ，'PythonQt.Qt.Qt' 对应 [Qt Namespace](https://doc.qt.io/qt-5/qt.html#AlignmentFlag-enum)，用dir()就可以看看这些模块里都有些什么。
+我们可以看到 PythonQt 模块中包含了'Qt', 'QtCore', 'QtGui', 'QtMultimedia', 'QtNetwork', 'QtOpenGL', 'QtSql', 'QtSvg', 'QtUiTools', 'QtXml', 'QtXmlPatterns'这些模块。其中 'PythonQt.Qt' 模块对应 [QtWidget](https://doc.qt.io/qt-5/qtwidgets-index.html) ，'PythonQt.Qt.Qt' 对应 [Qt Namespace](https://doc.qt.io/qt-5/qt.html#AlignmentFlag-enum)。用dir()看看这些模块里都有些什么。
 
 ``` python
 >>> dir(PythonQt.Qt)
@@ -63,15 +63,15 @@ a=QLineEdit()
 a.text ='Hello,world!'
 ```
 
-### 数据类型的转换
+### 数据的转换
 
-从上面例子中的```a.text ='Hello,world!'```这句我们可以看到， 'Hello,world!'这是一个 Python 中的str变量， a 是一个 QLineEdit对象，text 是a的一个属性。显然这里需要将 Python 中的变量转换为 C++ 变量，才能完成这样的操作。
+从上面例子中的```a.text ='Hello,world!'```这句我们可以看到， 'Hello,world!'这是一个 Python 中的str常量， a 是一个 QLineEdit对象，text 是a的一个属性。显然这里需要将 Python 中的常量转换为 C++ 的常量，才能完成这样的操作。
 
 这就要讲到 Python 和 Qt 的数据类型之间的转换了。
 
-我们知道，Python 中的数据类型肯定和 Qt 支持的数据类型肯定是不同的，如果需要用 Python 语句调用Qt对象和接口，必须要解决数据类型转换的问题，否则无法将 Python 中的数据做为传入参数，也无法处理 Qt 接口调用的返回值。
+我们知道，Python 中的数据类型肯定和 Qt 支持的数据类型是不同的，如果需要用 Python 语句调用Qt对象和接口，必须要解决数据类型转换的问题，否则无法将 Python 中的数据做为传入参数，也无法处理 Qt 接口调用的返回值。
 
-在 biForm 底层就建立了它们之间的转换关系，转换方式参考下面这个表格：
+在 biForm 底层就建立了它们之间的转换关系。下面的表格是它们之间的对应关系。
 
 <table>
 	<tr>
@@ -82,7 +82,7 @@ a.text ='Hello,world!'
 	<tr>
 		<td>void</td>
 		<td>None</td>
-		<td>如果一个Qt函数返回 void，在 Python 显示的返回值对应 None</td>
+		<td>如果一个Qt函数返回 void，在 Python 中对应 None</td>
 	</tr>
 	<tr>
 		<td>QMetaType::Char QMetaType::UChar QMetaType::Short QMetaType::UShort QMetaType::Long QMetaType::ULong QMetaType::Int QMetaType::UInt QMetaType::QChar QMetaType::LongLong QMetaType::ULongLong</td> 
@@ -136,13 +136,15 @@ a.text ='Hello,world!'
 	</tr>
 </table>
 
+一般是在通过 Python 语句调用 Qt 接口时，需要将返回值按下表转换为 Python 数据。在需要将 Python 数据做为传入参数调用 Qt 接口时，按参数类型对 Python 数据进行转换。
+
 ###  创建一个 Qt 对象
 
 在 biForm 中要创建一个 Qt 对象，有以下几种情况。
 
-QString、QVariant、QList、QHash、QMap、QMapIterator、QMultiMap、QMultiMapIterator、QPair、QVariantList、QStringList、QVectorIterator、QVector、QVarLengthArray 等类型，直接在 Python 语句中用对应的数据类型创建方法来创建，biForm会按照转换规则进行转换。biForm中不能以类似于 ```a=QString()``` 这种语法创建一个 QString 对象。如果不清楚哪些类型符合这一规则，可以通过 dir(PythonQt.Qt)，如果列表中没有的，就是不能这样创建的类型。
+QString、QVariant、QList、QHash、QMap、QMapIterator、QMultiMap、QMultiMapIterator、QPair、QVariantList、QStringList、QVectorIterator、QVector、QVarLengthArray 等类型，直接在 Python 语句来创建，在 Qt 接口需要使用这些对象时，biForm会按照参数类型和转换规则进行转换。比如用```a='text'```，在调用需要以QString为参数的函数或方法时直接使用变量a就可以了，比如```button.setCaption(a)```。需要注意的是，以上这些类型，在 biForm 中不能以 ```a=QString()``` 这种语法创建一个新的实例。如果不清楚哪些类型符合这一规则，可以通过 dir(PythonQt.Qt) 查看该类型是否在清单中，如果没有，就是不能做这样创建操作。
 
-其它 Qt 类对象，创建方式类似于 Python 或 C++中的方式，比如 QColor、QSize 等，它们创建后，都会被转换成 一个 PyObject。但不支持以关键字方式传入参数。
+其它 Qt 类，创建新的实例的方法类似于 Python 或 C++中常用的方式，比如 QColor、QSize 等，它们创建后，都会被转换成 一个 PyObject。但不支持以关键字方式传入参数。
 
 我们用以下的命令试试：
 
@@ -161,16 +163,16 @@ Traceback (most recent call last):
 ValueError: Called QColor() -> QColor with keyword arguments, but called slot does not support kwargs.
 ```
 
-可以看到使用```Qt.QColor(r=10,g=10,b=10)```会报错。因为 biForm 底层不支持这种调用方式调用Qt接口。
+可以看到使用```Qt.QColor(10,10,10)```就可以创建一个 QColor 对象实例，但使用```Qt.QColor(r=10,g=10,b=10)```会报错。因为 biForm 中的 Python 接口不支持以关键字方式传入参数来调用Qt接口。
 
-总结一下，我们在使用 biForm 写 Python 语句时，优先考虑以 Python 内建的方式创建变量和对象并进行各种处理。比如切片操作等，都直接通过 Python 语句来进行处理。只有在需要使用 Qt 独有的内容时，才需要导入 PythonQt 模块。
+总结一下，我们在使用 biForm 写 Python 语句时，Python 中有的对象类型，直接以 Python 内建的方式创建就可以。基于这些对象的各类操作，比如切片操作等，也都直接通过 Python 语法来进行处理。只有在需要调用 Qt 独有的类和接口时，才需要导入 PythonQt 模块。调用 PythonQt 模块中的接口时，biForm 底层会自动对传入传出参数进行转换处理。
 
 ### 对象的使用
 
-我们用 ```a=Qt.QLineEdit()``` 创建一个 QLineEdit，用 ```print(a.help())``` 来看看：
+我们用 ```obj=Qt.QLineEdit()``` 创建一个 QLineEdit，用 ```print(obj.help())``` 来看看：
 
 ``` python
->>> print(a.help())
+>>> print(obj.help())
 --- QLineEdit ---
 Properties:   #------------------- QLineEdit 的属性
 objectName (QString )
@@ -327,33 +329,33 @@ selectionChanged()
 	<tr>
 	<td>读属性</td>
 	<td>对象.属性名</td>
-	<td>a.text</td>
+	<td>obj.text</td>
 	</tr>
 	<tr>
 	<td>写属性</td>
 	<td>对象.属性名=值</td>
-	<td>a.text='hello'</td>
+	<td>obj.text='hello'</td>
 	</tr>
 	<tr>
 	<td>构造函数</td>
 	<td>对象=类名(参数)</td>
-	<td>a=QLineEdit('hello')</td>
+	<td>obj=QLineEdit('hello')</td>
 	</tr>
 	<tr>
 	<td>方法和槽</td>
 	<td>对象.方法或槽(传入参数)</td>
-	<td>a.setEnabled(False)</td>
+	<td>obj.setEnabled(False)</td>
 	</tr>
 	<tr>
 	<td>枚举类型</td>
 	<td>对象.枚举变量</td>
-	<td>a.LeadingPosition</td>
+	<td>obj.LeadingPosition</td>
 	</tr>
 	<tr>
 	<tr>
 	<td>信号</td>
 	<td>对象.信号(参数)</td>
-	<td>a.textChanged('new text')</td>
+	<td>obj.textChanged('new text')</td>
 	</tr>
 	<tr>
 </table>
@@ -362,7 +364,9 @@ selectionChanged()
 
 ### 信号和槽
 
-用过 Qt 的朋友对 Qt 中的信号和槽一定不会陌生，信号和槽的设计可以说是 Qt 框架中的一大亮点。那么在 biForm 中怎么使用信号和槽呢？
+用过 Qt 的朋友对 Qt 中的信号和槽一定不会陌生，信号和槽的设计可以说是 Qt 框架中的一大亮点。对这不太熟悉的朋友，可以参考 [Qt 中的信号和槽](https://doc.qt.io/qt-5/signalsandslots.html)。
+
+那么在 biForm 中怎么使用信号和槽呢？
 
 #### 1、连接信号和槽
 
@@ -398,7 +402,7 @@ scrollBar.connect('valueChanged(int)',showValue)
 
 当然，我们也可以连接信号和信号，写法和上面的连接信号和槽一样。
 
-要注意如果 connect 调用的时机不对，会在表单执行过程中被反复地执行，也就是一个信号，可能会触发N次对槽的调用。所以如果只需要触发一次槽的调用的话，一般把 connect 写在表单的”公共模块”里，这样随着表单的初始化，它只会被执行一次。
+要注意的是以上的连接语句，如果被重复调用，是会产生重复的连接的，重复的连接会在信号发出后多次调用被连接上的槽函数。可以在 Qt 中搜索关于 Qt::UniqueConnection 的用法来避免重复连接。在 biForm 中，如果要避免连接的话，一般把 connect 写在表单的”公共模块”里，这样随着表单的初始化，它只会被执行一次，不需要使用 Qt::UniqueConnection 也不会发生重复连接的情况。或者在使用 connect 时多加一个参数，比如 ```scrollBar.connect('valueChanged(int)',label,'setNum(int)'),Qt.AutoConnection | Qt.UniqueConnection)```
 
 也可以用 disconnect 断开连接，语法与 connect 一样。
 
@@ -406,15 +410,15 @@ scrollBar.connect('valueChanged(int)',showValue)
 
 #### 2、发出信号
 
-C++ 中使用 Qt 可以用 ``` emit someSignal(args)``` 或 ``` someSignal(args)``` 发出信号。
+C++ 中 ``` emit someSignal(args)``` 或 ``` someSignal(args)``` 发出信号。
 
 在 biForm 中，用 ```obj.someSignal(args)``` 发出信号。
 
 #### 3、methods 和 slots 都被看做是槽
 
-在 biForm 中 QObjects 子类的 methods 可以和 slots 一样使用。
+在 biForm 中 QObject 子类的 methods 可以和 slots 一样使用。
 
-比如 setToolTip 在用 C++ 开发 Qt 程序时，并不能把它当做槽来使用。但在 Python 中可以象调用槽一样，和 signals 进行连接，会更方便。
+比如 setToolTip 在用 C++ 时，并不能把它当做槽来使用。但在 Python 中可以象调用槽一样，和 signals 进行连接。
 
 ### biForm 控件
 
@@ -422,15 +426,15 @@ C++ 中使用 Qt 可以用 ``` emit someSignal(args)``` 或 ``` someSignal(args)
 
 ![controls](controls.png) 
 
-这些控件都是继承自 QWidget ，但有进行一些封装，所以和 QWidget 中类似的控件，接口会稍有些不同，具体参考更详细的API。
+这些控件都是继承自 QWidget ，biForm 对它们进行了一些封装，所以和 QWidget 中同类控件，接口会稍有些不同，具体参考更详细的API。
 
-需要注意的是，在 biForm 中目前并不支持以构造函数的方式用 Python 脚本创建这些控件。以后的版本可能会考虑是否需要增加此项功能。
+需要注意的是，在 biForm 中目前不支持以构造函数的方式用 Python 脚本创建这些控件的新实例。
 
 ### 面向对象：继承和重载
 
-除了使用 biForm 提供的控件，我们也可以使用 Qt 已有的控件类。可以直接使用这些基类，也可以通过 Python 面向对象的语法定义一个 class 继承这些基础后使用。
+除了使用 biForm 提供的控件，我们也可以使用 Qt 中其它控件。可以直接使用这些基类，也可以通过 Python 面向对象的语法定义一个 class 继承这些基类后再使用。
 
-比如以下这段脚本就是继承了 QWidget ，并通过对 paintEvent 、timerEvent 、keyPressEvent、mousePressEvent 的重载和覆盖，实现对这些事件响应的特殊需要。
+比如以下这段脚本就是继承了 QWidget ，并通过对 paintEvent 、timerEvent 、keyPressEvent、mousePressEvent 的重载和覆盖，实现对这些事件的特殊的响应算法。
 
 ```
 from PythonQt import *
@@ -484,6 +488,8 @@ class Squiggly(QWidget):
 			self.update()
 			afterTextChanged(self.text)
 ```
+
+可以下载这个 [QWidget继承示例](https://raw.githubusercontent.com/icevivi/staticpages/master/docs/biform_py/qwidget_demo.zip) 查看如何继承和使用 QWidget 。
 
 ## 参考资料
 

@@ -131,15 +131,21 @@ waitingMsg(QString)
 waitingStep(QString,int)
 statusChanged()
 ```
+
 如果不是 QObject 子类的实例，只能通过 dir 函数查看，比如 this 对象。
 
 ## 总结一下
 
 - 表单的 ```__name__``` 永远都不会是 ```__main__```
+
 - 表单的 ```__name__```的值不是固定的，是动态生成的
+
 - 用 ```this``` 来指代当前这个表单
+
 - ```this.form``` 才是这个表单的 ```QObject``` 子类实例
+
 - ```this.controlname``` 或 ```controlname``` 是指表单上的名称为 ```controlname``` 的一个 ```QObject``` 子类实例
+
 - 通过 ```print(obj.help())``` 可以打印名为 ```obj``` 的 ```QObject``` 子类实例的接口帮助，其它不是 ```QObject``` 子类实例的对象只能通过 ```dir()``` 函数查看
 
 
