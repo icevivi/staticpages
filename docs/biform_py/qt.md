@@ -408,7 +408,7 @@ def showValue(v):
 scrollBar.connect('valueChanged(int)',showValue)
 ```
 
-这里 printValue 是一个自定义 Python 函数，在 connect 中直接用函数名就可以了，不能用字符串形式，也不需要指定参数的类型。Python 在执行的时候，会自动对参数进行对应。
+这里 showValue 是一个自定义 Python 函数，在 connect 中直接用函数名就可以了，不能用字符串形式，也不需要指定参数的类型。Python 在执行的时候，会自动对参数进行对应。
 
 当然，我们也可以连接信号和信号，写法和上面的连接信号和槽一样。
 
