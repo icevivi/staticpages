@@ -8,6 +8,8 @@
 
  - [biForm 和 Qt](/biform_py/qt)
 
+ - [biForm 中的UUID](/biform_uuid/uuid)
+
 - [快速入门]
 
  - [biForm](https://docs.bilive.com/#/guides/biform_quickstart)
