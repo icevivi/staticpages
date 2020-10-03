@@ -8,7 +8,7 @@
 
 > UUID 是 通用唯一识别码（Universally Unique Identifier）的缩写，是一种软件建构的标准，亦为开放软件基金会组织在分布式计算环境领域的一部分。其目的，是让分布式系统中的所有元素，都能有唯一的辨识信息，而不需要通过中央控制端来做辨识信息的指定。如此一来，每个人都可以创建不与其它人冲突的UUID。在这样的情况下，就不需考虑数据库创建时的名称重复问题。目前最广泛应用的UUID，是微软公司的全局唯一标识符（GUID），而其他重要的应用，则有Linux ext2/ext3文件系统、LUKS加密分区、GNOME、KDE、Mac OS X等等。另外我们也可以在e2fsprogs包中的UUID库找到实现。
 
-UUID有不同的版本，在 biForm 中的UUID是通过 Qt 的 QUuid::createUuid() 生成的UUID，格式为38位数字和字母组成的字符串，格式为”{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}“，比如”{402d17b4-d1d1-4ddb-b12d-da8e262536e5}“。
+biForm 中的UUID是通过 Qt 的 QUuid::createUuid() 生成的。格式为38位数字和字母组成的字符串“{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}”，比如“{402d17b4-d1d1-4ddb-b12d-da8e262536e5}”。
 
 ## biForm 在哪些地方用到了 UUID
 
@@ -30,7 +30,7 @@ biForm 用于开发PFF表单，而PFF在运行时环境下，可以任意组合�
 
 ``` python
 
-	pub.openPFF('{402d17b4-d1d1-4ddb-b12d-da8e262536e5}')
+pub.openPFF('{402d17b4-d1d1-4ddb-b12d-da8e262536e5}')
 
 ```
 
@@ -40,7 +40,7 @@ pub内置对象的openPFF用于按UUID打开对应的表单。如何显示由运
 
 ``` python
 
-	pub.popupPFF('{402d17b4-d1d1-4ddb-b12d-da8e262536e5}')
+pub.popupPFF('{402d17b4-d1d1-4ddb-b12d-da8e262536e5}')
 
 ```
 
@@ -48,16 +48,16 @@ openPFF 和 popupPFF 都可以传参数给准备打开的表单，比如：
 
 ``` python
 
-	pub.openPFF('{402d17b4-d1d1-4ddb-b12d-da8e262536e5}',[['ID',16],['name','张三三']])
+pub.openPFF('{402d17b4-d1d1-4ddb-b12d-da8e262536e5}',[['ID',16],['name','张三三']])
 
 ```
 
-就是将键值对以 [['ID',16],['name','张三三']] 这种列表的格式传给准备打开的表单。在打开的表单中，可以通过 this.form.getArg 来读取这些参数的值并做相应的处理。比如： 
+这句会将键值对以 [['ID',16],['name','张三三']] 这种列表做为参数传给准备打开UUID为'{402d17b4-d1d1-4ddb-b12d-da8e262536e5}'的表单。在打开的表单中，可以通过 this.form.getArg 来读取这些参数的值并做相应的处理。比如： 
 
 ``` python
 
-	ID=this.form.getArg('ID')
-	name=this.form.getArg('name')
+ID=this.form.getArg('ID')
+name=this.form.getArg('name')
 
 ```
 
@@ -69,7 +69,7 @@ PFF表单都可以直接按界面显示的样式打印，但在很多应用中�
 
 ``` python
 
-	this.form.setPrintFormUUID('{402d17b4-d1d1-4ddb-b12d-da8e262536e5}')
+this.form.setPrintFormUUID('{402d17b4-d1d1-4ddb-b12d-da8e262536e5}')
 
 ```
 
@@ -99,15 +99,48 @@ PFF表单都可以直接按界面显示的样式打印，但在很多应用中�
 
 ``` python
 
-	db=this.form.database()
-	result = db.execute("select * from "+db.getRealTableName('mytable')+\
+db=this.form.database()
+result = db.execute("select * from "+db.getRealTableName('mytable')+\
 		" where fcount>100")
-	print(result)
+print(result)
 
 ```
 
+### 4. 每条记录的UUID字段
 
+在PFF表单的数据视图中设计的表，在创建实体表时，都会加上UUID和lastUpdated两个字段。UUID这个字段也非常重要，它用于唯一地标识一条记录。它的值由PFF的运行时数据引擎自动生成，规则如下：
 
+- 主表中每条记录的UUID值不同，新记录会自动创建一个新的UUID
 
+- 子表与主表有一对一或一对多关系（在数据视图中有设置）时，子表所有记录的UUID与主表对应的记录的UUID值相同，因此通过UUID的值，可以读取主表所有对应的子表的记录，而不一定需要通过关联字段
+
+一般在程序中不需要显式地使用这个字段的值，但在一些特殊的情况下，也是需要在SQL语句等场合下使用这个字段的。
+
+比如在修改一条记录时，判断员工身份证号是否被改为与其它记录的身份证号相同：
+
+``` python
+
+db=this.form.database()
+result = db.execute("select 1 from "+db.getRealTableName('t_emp')+\
+		" where fidcard='"+this.leIDCard.text+"' and UUID<>'"+this.form.getCurrentUUID()+"'")
+if len(result)>0:
+	this.form.showSplashMsg('身份证号与其它记录重复')
+	return False
+
+```
+
+以上脚本中的SQL语句查询与输入的值相同的身份证号时，需要排除当前正在显示的记录，所以需要使用 this.form.getCurrentUUID() 返回当前正显示的记录的UUID的值。用这个字段比用主关键字更通用，若需要修改表的主关键字的名称或复制这段脚本用于其它场合时，这段代码修改量更小，因为所有表都有UUID字段。
+
+一个表单通常在打开时会显示空白表单，但有时我们需要打开一个表单并且直接定位到某条特定的记录，这种情况下也需要使用到记录的UUID。比如使用以下 python 语句直接定位到特定的记录：
+
+``` python
+
+pub.openRecord('{402d17b4-d1d1-4ddb-b12d-da8e262536e5}','{5e2d1259-73e9-4ef5-8a96-6775741dd352}')
+
+```
+
+### 5. 应用包的UUID
+
+多个PFF表单组成的应用包PFP也有一个UUID，这个值一般不需要用户直接使用或通过 Python 脚本调用，但如果开发者要自己打包PFP，就需要注意不同的应用包，需要指定不同的UUID。如果两个PFP有相同的UUID，在 biReader 中注册第二个包时，会认为是对这个应用包进行升级，如果它们并不是同一个应用，尽管并不会带来运行时的不良后果，但会给最终用户造成一些体验上的混乱。
 
 
