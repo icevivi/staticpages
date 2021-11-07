@@ -2,8 +2,8 @@
 
 ## 用户需知
 
-- [软件许可协议](/misc/usrlicense) 
-- 
+- [软件许可协议](/misc/userlicense) 
+
 ## biForm基础知识
 
 - [biForm 与其它 IDE 的对比](/biform_py/ide) 
