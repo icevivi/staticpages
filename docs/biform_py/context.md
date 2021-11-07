@@ -51,16 +51,6 @@ test
 		<th>说明</th>
 	</tr>
 	<tr>
-		<td>gbk</td>
-		<td>函数</td>
-		<td>为了向下兼容保留的，已经不再使用</td>
-	</tr>
-	<tr>
-		<td>gbkList</td>
-		<td>函数</td>
-		<td>为了向下兼容保留的，已经不再使用</td>
-	</tr>
-	<tr>
 		<td>log</td>
 		<td>对象</td>
 		<td>提供日志输出的接口，通过 log.debug 等接口输出日志内容</td>
@@ -147,5 +137,3 @@ statusChanged()
 - ```this.controlname``` 或 ```controlname``` 是指表单上的名称为 ```controlname``` 的一个 ```QObject``` 子类实例
 
 - 通过 ```print(obj.help())``` 可以打印名为 ```obj``` 的 ```QObject``` 子类实例的接口帮助，其它不是 ```QObject``` 子类实例的对象只能通过 ```dir()``` 函数查看
-
-

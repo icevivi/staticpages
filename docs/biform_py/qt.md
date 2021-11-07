@@ -376,8 +376,6 @@ selectionChanged()
 
 用过 Qt 的朋友对 Qt 中的信号和槽一定不会陌生，信号和槽的设计可以说是 Qt 框架中的一大亮点，在 biForm 中自然也继承了这一用法。对这个特性不太熟悉的朋友，可以参考 [Qt 中的信号和槽](https://doc.qt.io/qt-5/signalsandslots.html) 先了解一下。
 
-那么在 biForm 中怎么使用信号和槽呢？
-
 #### 1）连接信号和槽
 
 c++ 中我们通常是这样写：
@@ -397,7 +395,7 @@ scrollBar=QScrollBar()
 scrollBar.connect('valueChanged(int)',label,'setNum(int)')
 ```
 
-需要注意的是 Qt 中的信号和槽需要用字符串参数传入给发出信号对象的 connect 方法。
+需要注意的是connect的参数中，如果是使用 Qt对象的信号和槽，需要以字符串变量的形式传入。
 
 我们还可以将信号连接到一个 Python 函数。比如：
 
@@ -417,6 +415,20 @@ scrollBar.connect('valueChanged(int)',showValue)
 也可以用 disconnect 断开连接，语法与 connect 一样。
 
 在 Python 中 调用 connect 是有返回值的，如果连接成功会返回 True，否则返回 False。这一点与 C++ 中的用法稍有区别。
+
+以上只是举例说明，在 biForm 中，一共有三种调用 connect 的方式：
+
+- bool connect( const QByteArray& signal, PyObject* callable) 用于连接发送方的信号和某个 Python 函数
+
+- bool connect(const QByteArray& signal, QObject* receiver, const QByteArray& slot,  Qt::ConnectionType type = Qt::AutoConnection) 发送方调用，连接到接收方的槽函数，可指定连接类型
+
+- bool connect(QObject* sender, const QByteArray& signal, const QByteArray& slot,  Qt::ConnectionType type = Qt::AutoConnection) 接收方调用，连接到发送方的信号和自己的槽函数，可指定连接类型
+
+有两种调用 distconnect 的方式：
+
+- bool disconnect(const QByteArray& signal, PyObject* callable = NULL) 发送方调用，断开信号和 Python 函数的连接
+
+- bool disconnect(const QByteArray& signal, QObject* receiver, const QByteArray& slot) 发送方调用，断开信号和某个接收方和其槽函数的连接
 
 #### 2）发出信号
 
@@ -442,9 +454,9 @@ biForm 有自己专有的一些控件，用于设计表单界面。目前可以�
 
 ### 面向对象：继承和重载
 
-除了使用 biForm 提供的控件，我们也可以使用 Qt 中其它控件。可以直接使用这些基类，也可以通过 Python 面向对象的语法定义一个 class 继承这些基类后再使用。
+除了使用 biForm 提供的控件，我们也可以使用 Qt 中其它控件。可以直接使用这些Qt中的类，也可以通过 Python 面向对象的语法定义一个 class 继承这些类。
 
-比如以下这段脚本就是继承了 QWidget ，并通过对 paintEvent 、timerEvent 、keyPressEvent、mousePressEvent 的重载和覆盖，实现对这些事件的特殊的响应算法。
+比如以下这段脚本就是继承了 QWidget ，并通过重写 paintEvent 、timerEvent 、keyPressEvent、mousePressEvent 实现特殊的事件响应算法。
 
 ```
 from PythonQt import *

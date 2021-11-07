@@ -1,6 +1,10 @@
-# biForm 文档中心
+# biLive 文档中心
 
-## 基础知识
+## 用户需知
+
+- [软件许可协议](/misc/usrlicense) 
+- 
+## biForm基础知识
 
 - [biForm 与其它 IDE 的对比](/biform_py/ide) 
 
@@ -16,7 +20,7 @@
 
 - [biReader 快速入门](https://docs.bilive.com/#/bireader_quickstart/main)
 
-## 开发实例
+## biForm开发实例
 
 - [WPS Office for Linux 二次开发演示](wps/rpc)
 
